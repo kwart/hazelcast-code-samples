@@ -19,13 +19,16 @@ public class Client {
         int keyCount = 10;
         IMap<Integer, Integer> map = client.getMap("sample map");
 
-        for (int i = 0; i < keyCount; i++) {
-            map.put(i, 0);
+        if (map.isEmpty()) {
+            for (int i = 0; i < keyCount; i++) {
+                map.put(i, 0);
+            }
         }
         map.executeOnEntries(incrementingEntryProcessor);
 
         for (int i = 0; i < keyCount; i++) {
             System.out.println(map.get(i));
         }
+        client.shutdown();
     }
 }
