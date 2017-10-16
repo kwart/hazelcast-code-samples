@@ -37,6 +37,7 @@ public class LoadAll {
         String mapName = LoadAll.class.getCanonicalName();
 
         Config config = createNewConfig(mapName);
+        Hazelcast.newHazelcastInstance(config);
         HazelcastInstance node = Hazelcast.newHazelcastInstance(config);
 
         IMap<Integer, Integer> map = node.getMap(mapName);

@@ -11,7 +11,10 @@ import java.util.Iterator;
  **/
 public class ResultSetIterator<T> implements Iterator<T>, Closeable {
 
+    private static final Object NOT_LOADED = new Object();
+
     private ResultSet resultSet;
+    private Object nextObject = NOT_LOADED;
 
     public ResultSetIterator(ResultSet resultSet) {
         this.resultSet = resultSet;
@@ -20,16 +23,21 @@ public class ResultSetIterator<T> implements Iterator<T>, Closeable {
     @Override
     public boolean hasNext() {
         try {
-            return resultSet.next();
+            checkNextLoaded();
+            return nextObject != NOT_LOADED;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public T next() {
         try {
-            return (T) resultSet.getObject(1);
+            checkNextLoaded();
+            Object currentObject = nextObject;
+            nextObject = NOT_LOADED;
+            return (T) currentObject;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -47,5 +55,13 @@ public class ResultSetIterator<T> implements Iterator<T>, Closeable {
     @Override
     public void remove() {
         throw new UnsupportedOperationException();
+    }
+
+    private void checkNextLoaded() throws SQLException {
+        if (nextObject == NOT_LOADED) {
+            if (resultSet.next()) {
+                nextObject = resultSet.getObject(1);
+            }
+        }
     }
 }
