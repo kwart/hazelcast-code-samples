@@ -35,3 +35,43 @@ spec:
     port: 5701
   - name: http-app
     port: 8080
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hazelcast-embedded2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hazelcast-embedded2
+  template:
+    metadata:
+      labels:
+        app: hazelcast-embedded2
+    spec:
+      containers:
+        - name: hazelcast-embedded2
+          image: kwart/hazelcast-kubernetes-embedded-sample
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 5701
+          - containerPort: 8080
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hazelcast-embedded2
+spec:
+  type: LoadBalancer
+  selector:
+    app: hazelcast-embedded2
+  ports:
+  - name: tcp-hazelcast
+    port: 5701
+  - name: http-app
+    port: 8080

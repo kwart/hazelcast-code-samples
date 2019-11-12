@@ -27,7 +27,8 @@ kind: Service
 metadata:
   name: hazelcast-embedded
 spec:
-  type: LoadBalancer
+  type: ClusterIP
+  clusterIP: None
   selector:
     app: hazelcast-embedded
   ports:
